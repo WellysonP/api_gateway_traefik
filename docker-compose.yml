@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  reverse-proxy:
+    image: traefik:v3.3
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:8888"
+    ports:
+      - "8080:8080"
+      - "8888:8888"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - web
+    # labels:
+    #   - "traefik.http.middlewares.auth-basicauth.basicauth.users=admin:$$2y$$05$$xQDjOGlBg.Hkgm2n8x4SBuourxuGLM6lv1YmT8sMc7Vu4ylUs/aHS"
+
+networks:
+  web:
+    external: true
