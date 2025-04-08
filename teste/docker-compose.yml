@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  wallos:
+    container_name: wallos
+    image: bellamy/wallos:latest
+    ports:
+      - "8282:80/tcp"
+    environment:
+      TZ: 'America/Sao_Paulo'
+    volumes:
+      - './db:/var/www/html/db'
+      - './logos:/var/www/html/images/uploads/logos'
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wallos.rule=PathPrefix(`/wallos`)"
+      - "traefik.http.services.wallos.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.wallos-stripprefix.stripprefix.prefixes=/wallos"
+      # - "traefik.http.routers.wallos.middlewares=wallos-stripprefix@docker, auth-basicauth@docker"
+      - "traefik.http.routers.wallos.middlewares=wallos-stripprefix@docker"
+
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
